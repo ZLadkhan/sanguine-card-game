@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ControlBoardStrategy.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">f25-hw07-groups-group-DartGoggins</a> &gt; <a href="index.source.html" class="el_package">sanguine.strategy</a> &gt; <span class="el_source">ControlBoardStrategy.java</span></div><h1>ControlBoardStrategy.java</h1><pre class="source lang-java linenums">package sanguine.strategy;
+
+import java.util.List;
+import sanguine.model.Card;
+import sanguine.model.Cell;
+import sanguine.model.Player;
+import sanguine.model.ReadOnlySanguineModel;
+
+
+/**
+ * A strategy that chooses moves to maximize cell ownership on the board.
+ * This strategy evaluates all possible moves and selects the one that gives
+ * the player control of the most cells. In case of ties, chooses uppermost-leftmost
+ * position first, then leftmost card.
+ */
+<span class="nc" id="L16">public class ControlBoardStrategy implements PlayerStrategy {</span>
+
+  /**
+   * Chooses a move that maximizes the number of cells owned by the player.
+   * Considers all valid moves and picks the one resulting in the most cells owned.
+   * Breaks ties by choosing uppermost-leftmost position, then leftmost card.
+   *
+   * @param model the read-only model to analyze
+   * @param player the player to choose a move for
+   * @return a Move that maximizes cell control, or null if no valid move exists
+   */
+  @Override
+  public Move chooseMove(ReadOnlySanguineModel model, Player player) {
+<span class="nc" id="L29">    List&lt;Card&gt; hand = model.getCurrentPlayerHand();</span>
+<span class="nc" id="L30">    int[] dims = model.getGameBoardDimensions();</span>
+<span class="nc" id="L31">    int rows = dims[0];</span>
+<span class="nc" id="L32">    int cols = dims[1];</span>
+
+<span class="nc" id="L34">    Move bestMove = null;</span>
+<span class="nc" id="L35">    int maxCellsControlled = -1;</span>
+
+<span class="nc bnc" id="L37" title="All 2 branches missed.">    for (int row = 0; row &lt; rows; row++) {</span>
+<span class="nc bnc" id="L38" title="All 2 branches missed.">      for (int col = 0; col &lt; cols; col++) {</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">        for (int cardIndex = 0; cardIndex &lt; hand.size(); cardIndex++) {</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">          if (model.isLegalMove(cardIndex, row, col)) {</span>
+<span class="nc" id="L41">            int cellsControlled = estimateCellsControlled(model, cardIndex,</span>
+                row, col, player);
+
+<span class="nc bnc" id="L44" title="All 2 branches missed.">            if (cellsControlled &gt; maxCellsControlled) {</span>
+<span class="nc" id="L45">              maxCellsControlled = cellsControlled;</span>
+<span class="nc" id="L46">              bestMove = new Move(cardIndex, row, col);</span>
+<span class="nc bnc" id="L47" title="All 4 branches missed.">            } else if (cellsControlled == maxCellsControlled &amp;&amp; bestMove != null) {</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">              if (isPreferredMove(row, col, cardIndex, bestMove)) {</span>
+<span class="nc" id="L49">                bestMove = new Move(cardIndex, row, col);</span>
+              }
+            }
+          }
+        }
+      }
+    }
+
+<span class="nc" id="L57">    return bestMove;</span>
+  }
+
+  /**
+   * Determines if the new move is preferred over the current best move in case of a tie.
+   * Prefers uppermost-leftmost position first, then leftmost card.
+   *
+   * @param newRow the row of the new move
+   * @param newCol the column of the new move
+   * @param newCardIndex the card index of the new move
+   * @param currentBest the current best move
+   * @return true if the new move should replace the current best
+   */
+  private boolean isPreferredMove(int newRow, int newCol, int newCardIndex, Move currentBest) {
+<span class="nc bnc" id="L71" title="All 2 branches missed.">    if (newRow &lt; currentBest.getRow()) {</span>
+<span class="nc" id="L72">      return true;</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">    } else if (newRow == currentBest.getRow()) {</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">      if (newCol &lt; currentBest.getColumn()) {</span>
+<span class="nc" id="L75">        return true;</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">      } else if (newCol == currentBest.getColumn()) {</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">        return newCardIndex &lt; currentBest.getCardIndex();</span>
+      }
+    }
+<span class="nc" id="L80">    return false;</span>
+  }
+
+  /**
+   * Estimates the number of cells the player would control after making this move.
+   * This is a heuristic that counts cells with player's cards and pawns,
+   * including those that would be influenced by the placed card.
+   *
+   * @param model the read-only model
+   * @param cardIndex the card being considered
+   * @param moveRow the row of the potential move
+   * @param moveCol the column of the potential move
+   * @param player the player making the move
+   * @return estimated number of cells controlled
+   */
+  private int estimateCellsControlled(ReadOnlySanguineModel model, int cardIndex,
+                                      int moveRow, int moveCol, Player player) {
+<span class="nc" id="L97">    int[] dims = model.getGameBoardDimensions();</span>
+<span class="nc" id="L98">    int rows = dims[0];</span>
+<span class="nc" id="L99">    int cols = dims[1];</span>
+<span class="nc" id="L100">    List&lt;Card&gt; hand = model.getCurrentPlayerHand();</span>
+<span class="nc" id="L101">    Card card = hand.get(cardIndex);</span>
+
+<span class="nc" id="L103">    int cellsControlled = 0;</span>
+
+<span class="nc bnc" id="L105" title="All 2 branches missed.">    for (int row = 0; row &lt; rows; row++) {</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">      for (int col = 0; col &lt; cols; col++) {</span>
+<span class="nc" id="L107">        Cell cell = model.getCellAt(row, col);</span>
+
+<span class="nc bnc" id="L109" title="All 4 branches missed.">        if (row == moveRow &amp;&amp; col == moveCol) {</span>
+<span class="nc" id="L110">          cellsControlled++;</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">        } else if (wouldInfluenceCell(card, moveRow, moveCol, row, col, player)) {</span>
+<span class="nc bnc" id="L112" title="All 4 branches missed.">          if (!cell.hasPawns() &amp;&amp; cell.getCard() == null) {</span>
+<span class="nc" id="L113">            cellsControlled++;</span>
+<span class="nc bnc" id="L114" title="All 6 branches missed.">          } else if (cell.hasPawns() &amp;&amp; cell.getPawnOwner() != player &amp;&amp; cell.getCard() == null) {</span>
+<span class="nc" id="L115">            cellsControlled++;</span>
+<span class="nc bnc" id="L116" title="All 6 branches missed.">          } else if (cell.hasPawns() &amp;&amp; cell.getPawnOwner() == player &amp;&amp; cell.getCard() == null) {</span>
+<span class="nc" id="L117">            cellsControlled++;</span>
+          }
+        }
+      }
+    }
+<span class="nc" id="L122">    return cellsControlled;</span>
+  }
+
+  /**
+   * Checks if placing a card would influence a specific cell.
+   *
+   * @param card the card being placed
+   * @param cardRow the row where card is placed
+   * @param cardCol the column where card is placed
+   * @param targetRow the row of the cell to check
+   * @param targetCol the column of the cell to check
+   * @param player the player placing the card
+   * @return true if the card would influence the target cell
+   */
+  private boolean wouldInfluenceCell(Card card, int cardRow, int cardCol,
+                                     int targetRow, int targetCol, Player player) {
+<span class="nc" id="L138">    int influenceRow = targetRow - cardRow + 2;</span>
+<span class="nc" id="L139">    int influenceCol = targetCol - cardCol + 2;</span>
+
+<span class="nc bnc" id="L141" title="All 8 branches missed.">    if (influenceRow &lt; 0 || influenceRow &gt;= 5 || influenceCol &lt; 0 || influenceCol &gt;= 5) {</span>
+<span class="nc" id="L142">      return false;</span>
+    }
+
+<span class="nc bnc" id="L145" title="All 2 branches missed.">    return card.hasInfluenceAt(influenceRow, influenceCol, player == Player.BLUE);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

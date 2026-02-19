@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SanguineTextualView.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">f25-hw07-groups-group-DartGoggins</a> &gt; <a href="index.source.html" class="el_package">sanguine.view</a> &gt; <span class="el_source">SanguineTextualView.java</span></div><h1>SanguineTextualView.java</h1><pre class="source lang-java linenums">package sanguine.view;
+
+import java.io.IOException;
+import sanguine.model.Cell;
+import sanguine.model.Player;
+import sanguine.model.ReadOnlySanguineModel;
+
+/**
+ * Represents the textual view for rendering a game of Sanguine.
+ * This view displays the game board as text with row scores and cell contents.
+ */
+public class SanguineTextualView implements GameTextualView {
+
+  private final ReadOnlySanguineModel model;
+
+  /**
+   * Constructs a textual view for Sanguine using the ReadOnly model.
+   *
+   * @param model represents the ReadOnly model being passed into the textual view
+   * @throws IllegalArgumentException if the model is null
+   */
+<span class="nc" id="L22">  public SanguineTextualView(ReadOnlySanguineModel model) {</span>
+<span class="nc bnc" id="L23" title="All 2 branches missed.">    if (model == null) {</span>
+<span class="nc" id="L24">      throw new IllegalArgumentException(&quot;The Sanguine model cannot be null!&quot;);</span>
+    }
+
+<span class="nc" id="L27">    this.model = model;</span>
+<span class="nc" id="L28">  }</span>
+
+  /**
+   * Renders the Sanguine game board in a string format.
+   * Each row is rendered with the red player score against the blue player score.
+   * Rows are separated using new lines for readability purposes.
+   *
+   * @return the string representation of the Sanguine game board
+   */
+  @Override
+  public String toString() {
+<span class="nc" id="L39">    StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L40">    int[] dims = model.getGameBoardDimensions();</span>
+
+<span class="nc bnc" id="L42" title="All 2 branches missed.">    for (int row = 0; row &lt; dims[0]; row++) {</span>
+<span class="nc" id="L43">      int[] rowScores = model.getRowScore(row);</span>
+<span class="nc" id="L44">      sb.append(rowScores[0]).append(&quot; &quot;);</span>
+
+<span class="nc bnc" id="L46" title="All 2 branches missed.">      for (int col = 0; col &lt; dims[1]; col++) {</span>
+<span class="nc" id="L47">        Cell cell = model.getCellAt(row, col);</span>
+<span class="nc" id="L48">        sb.append(renderCell(cell));</span>
+      }
+
+<span class="nc" id="L51">      sb.append(&quot; &quot;).append(rowScores[1]);</span>
+
+<span class="nc bnc" id="L53" title="All 2 branches missed.">      if (row &lt; dims[0] - 1) {</span>
+<span class="nc" id="L54">        sb.append(&quot;\n&quot;);</span>
+      }
+    }
+
+<span class="nc" id="L58">    return sb.toString();</span>
+  }
+
+  /**
+   * Renders the game board to a specified output area.
+   *
+   * @param output represents where to write the rendering to
+   * @throws IOException if there is an input or output error when writing
+   */
+  @Override
+  public void render(Appendable output) throws IOException {
+<span class="nc" id="L69">    output.append(this.toString());</span>
+<span class="nc" id="L70">  }</span>
+
+  /**
+   * Renders a single cell as a string character.
+   *
+   * @param cell the cell to render
+   * @return a string representation of the cell
+   */
+  private String renderCell(Cell cell) {
+<span class="nc bnc" id="L79" title="All 2 branches missed.">    if (cell.getCard() != null) {</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">      if (cell.getCardOwner() == Player.RED) {</span>
+<span class="nc" id="L81">        return &quot;R&quot;;</span>
+      } else {
+<span class="nc" id="L83">        return &quot;B&quot;;</span>
+      }
+    }
+<span class="nc bnc" id="L86" title="All 2 branches missed.">    if (cell.hasPawns()) {</span>
+<span class="nc" id="L87">      return String.valueOf(cell.getPawnCount());</span>
+    }
+<span class="nc" id="L89">    return &quot;_&quot;;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

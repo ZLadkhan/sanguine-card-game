@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PlayerStrategy.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">f25-hw07-groups-group-DartGoggins</a> &gt; <a href="index.source.html" class="el_package">sanguine.controller</a> &gt; <span class="el_source">PlayerStrategy.java</span></div><h1>PlayerStrategy.java</h1><pre class="source lang-java linenums">package sanguine.controller;
+
+import sanguine.model.ReadOnlySanguineModel;
+
+/**
+ * Represents a strategy for choosing moves in Sanguine.
+ */
+public interface PlayerStrategy {
+
+  /**
+   * Represents choosing the next move based on the current game state.
+   *
+   * @param model the current read-only model
+   * @return move representing the card index and target position, else null
+   */
+  Move chooseMove(ReadOnlySanguineModel model);
+
+  /**
+   * Represents a move in the game.
+   */
+  class Move {
+    public final int cardIndex;
+    public final int row;
+    public final int col;
+
+<span class="fc" id="L26">    public Move(int cardIndex, int row, int col) {</span>
+<span class="fc" id="L27">      this.cardIndex = cardIndex;</span>
+<span class="fc" id="L28">      this.row = row;</span>
+<span class="fc" id="L29">      this.col = col;</span>
+<span class="fc" id="L30">    }</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

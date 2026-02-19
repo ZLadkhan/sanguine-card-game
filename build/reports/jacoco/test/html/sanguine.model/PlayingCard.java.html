@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PlayingCard.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">f25-hw07-groups-group-DartGoggins</a> &gt; <a href="index.source.html" class="el_package">sanguine.model</a> &gt; <span class="el_source">PlayingCard.java</span></div><h1>PlayingCard.java</h1><pre class="source lang-java linenums">package sanguine.model;
+
+import java.util.Arrays;
+import java.util.Objects;
+
+/**
+ * Represents a playing card in the game of Sanguine.
+ * Card cannot change its contents, fixed with name, cost, value, and influence.
+ */
+public class PlayingCard implements Card {
+  private final String name;
+  private final int cost;
+  private final int value;
+  private final boolean[][] influenceGrid;
+
+  /**
+   * Represents the creation of a playing card in the game of Sanguine.
+   *
+   * @param name          represents the name of the card
+   * @param cost          represents the cost of a pawn from one to three inclusive
+   * @param value         represents the value of a card as a positive integer
+   * @param influenceGrid represents the 5x5 grid of the current game
+   * @throws IllegalArgumentException if any of the above params are not valid
+   */
+<span class="fc" id="L25">  public PlayingCard(String name, int cost, int value, boolean[][] influenceGrid) {</span>
+<span class="pc bpc" id="L26" title="2 of 4 branches missed.">    if (cost &lt; 1 || cost &gt; 3) {</span>
+<span class="nc" id="L27">      throw new IllegalArgumentException(&quot;Cost must be between 1 and 3 inclusive&quot;);</span>
+    }
+
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">    if (value &lt;= 0) {</span>
+<span class="nc" id="L31">      throw new IllegalArgumentException(&quot;Value must be positive&quot;);</span>
+    }
+
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">    if (influenceGrid.length != 5) {</span>
+<span class="nc" id="L35">      throw new IllegalArgumentException(&quot;Grid must be 5x5&quot;);</span>
+    }
+
+<span class="fc bfc" id="L38" title="All 2 branches covered.">    for (int i = 0; i &lt; 5; i++) {</span>
+<span class="pc bpc" id="L39" title="2 of 4 branches missed.">      if (influenceGrid[i] == null || influenceGrid[i].length != 5) {</span>
+<span class="nc" id="L40">        throw new IllegalArgumentException(&quot;The grid must have 5x5 dimensions.&quot;);</span>
+      }
+    }
+
+<span class="pc bpc" id="L44" title="1 of 2 branches missed.">    if (!influenceGrid[2][2]) {</span>
+<span class="nc" id="L45">      throw new IllegalArgumentException(&quot;The card in the center needs to have an influence.&quot;);</span>
+    }
+
+<span class="fc" id="L48">    this.name = name;</span>
+<span class="fc" id="L49">    this.cost = cost;</span>
+<span class="fc" id="L50">    this.value = value;</span>
+<span class="fc" id="L51">    this.influenceGrid = deepCopyOfGrid(influenceGrid);</span>
+<span class="fc" id="L52">  }</span>
+
+  /**
+   * Represents making a deep copy of a two-dimensional boolean array.
+   *
+   * @param original represents the array we make a deep copy of
+   * @return array which is the new array with the same values as the original array
+   */
+  private static boolean[][] deepCopyOfGrid(boolean[][] original) {
+<span class="fc" id="L61">    boolean[][] deepCopy = new boolean[5][5];</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">    for (int i = 0; i &lt; 5; i++) {</span>
+<span class="fc" id="L63">      deepCopy[i] = Arrays.copyOf(original[i], 5);</span>
+    }
+
+<span class="fc" id="L66">    return deepCopy;</span>
+  }
+
+  /**
+   * Represents getting the name of a particular card.
+   *
+   * @return the name of the card
+   */
+  @Override
+  public String getName() {
+<span class="nc" id="L76">    return name;</span>
+  }
+
+  /**
+   * Represents getting the specific cost associated with a particular card.
+   *
+   * @return the associated cost with a card
+   */
+  @Override
+  public int getCost() {
+<span class="fc" id="L86">    return cost;</span>
+  }
+
+  /**
+   * Represents getting the value score associated with a particular card.
+   *
+   * @return the value score of a specified card
+   */
+  @Override
+  public int getValue() {
+<span class="fc" id="L96">    return value;</span>
+  }
+
+  /**
+   * Represents validating whether the card has influence at a particular location.
+   *
+   * @param row          represents the relative row in the 5x5 grid labeled
+   *                     from zero to four inclusive
+   * @param col          represents the relative column in 5x5 grid labeled from
+   *                     zero to four inclusive
+   * @param isBluePlayer represents whether to mirror influence for blue player
+   * @return true if there is influence at the particular grid location, else return boolean false
+   */
+  @Override
+  public boolean hasInfluenceAt(int row, int col, boolean isBluePlayer) {
+<span class="pc bpc" id="L111" title="2 of 4 branches missed.">    if (row &lt; 0 || row &gt; 4) {</span>
+<span class="nc" id="L112">      throw new IllegalArgumentException(&quot;Rows must be between one and four inclusive.&quot;);</span>
+    }
+
+<span class="pc bpc" id="L115" title="2 of 4 branches missed.">    if (col &lt; 0 || col &gt; 4) {</span>
+<span class="nc" id="L116">      throw new IllegalArgumentException(&quot;Columns must be between one and four inclusive.&quot;);</span>
+    }
+
+<span class="fc bfc" id="L119" title="All 2 branches covered.">    if (isBluePlayer) {</span>
+<span class="fc" id="L120">      col = 4 - col;</span>
+    }
+
+<span class="fc" id="L123">    return influenceGrid[row][col];</span>
+  }
+
+  /**
+   * Represents checking if this card is equivalent to that card.
+   *
+   * @param other represents the other card being checked against this card
+   * @return true if the two cards have equivalent contents, else return boolean false
+   */
+  @Override
+  public boolean equals(Object other) {
+<span class="nc bnc" id="L134" title="All 2 branches missed.">    if (this == other) {</span>
+<span class="nc" id="L135">      return true;</span>
+    }
+
+<span class="nc bnc" id="L138" title="All 2 branches missed.">    if (!(other instanceof Card that)) {</span>
+<span class="nc" id="L139">      return false;</span>
+    }
+
+<span class="nc bnc" id="L142" title="All 2 branches missed.">    if (!this.name.equals(that.getName())</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">        || this.cost != that.getCost()</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">        || this.value != that.getValue()) {</span>
+<span class="nc" id="L145">      return false;</span>
+    }
+
+<span class="nc" id="L148">    return compareInfluenceGrids(that);</span>
+  }
+
+  /**
+   * Represents calculating the hash code for a particular card.
+   *
+   * @return the hash code value for this card
+   */
+  @Override
+  public int hashCode() {
+<span class="nc" id="L158">    int result = Objects.hash(name, cost, value);</span>
+<span class="nc" id="L159">    result = 31 * result + Arrays.deepHashCode(influenceGrid);</span>
+
+<span class="nc" id="L161">    return result;</span>
+  }
+
+  /**
+   * Represents reformatting a card with specified name, cost, and value score.
+   *
+   * @return the card parameters reformatted in string format
+   */
+  @Override
+  public String toString() {
+<span class="nc" id="L171">    return String.format(&quot;%s (Cost: %d, Value: %d)&quot;, name, cost, value);</span>
+  }
+
+  /**
+   * Represents comparing the influence grid of this card versus another.
+   *
+   * @param other represents the other card
+   * @return true if the influence patterns of this and the other card are similar
+   */
+  private boolean compareInfluenceGrids(Card other) {
+<span class="nc bnc" id="L181" title="All 2 branches missed.">    for (int row = 0; row &lt; 5; row++) {</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">      for (int column = 0; column &lt; 5; column++) {</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">        if (this.influenceGrid[row][column] != other.hasInfluenceAt(row, column, false)) {</span>
+<span class="nc" id="L184">          return false;</span>
+        }
+      }
+    }
+
+<span class="nc" id="L189">    return true;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

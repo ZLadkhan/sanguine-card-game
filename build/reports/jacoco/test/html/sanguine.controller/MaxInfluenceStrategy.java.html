@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MaxInfluenceStrategy.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">f25-hw07-groups-group-DartGoggins</a> &gt; <a href="index.source.html" class="el_package">sanguine.controller</a> &gt; <span class="el_source">MaxInfluenceStrategy.java</span></div><h1>MaxInfluenceStrategy.java</h1><pre class="source lang-java linenums">package sanguine.controller;
+
+import java.util.List;
+import sanguine.model.Card;
+import sanguine.model.Cell;
+import sanguine.model.Player;
+import sanguine.model.ReadOnlySanguineModel;
+
+/**
+ * Represents a strategy that tries to maximize board control through pawn influence.
+ * We prioritize moves which place pawns in more positions or convert opponent pawn influences.
+ * We also consider value here, though not as a primary component.
+ */
+<span class="fc" id="L14">public class MaxInfluenceStrategy implements PlayerStrategy {</span>
+
+  @Override
+  public Move chooseMove(ReadOnlySanguineModel model) {
+<span class="fc" id="L18">    List&lt;Card&gt; hand = model.getCurrentPlayerHand();</span>
+<span class="fc" id="L19">    int[] dims = model.getGameBoardDimensions();</span>
+<span class="fc" id="L20">    Player currentPlayer = model.getCurrentPlayer();</span>
+
+<span class="fc" id="L22">    Move bestMove = null;</span>
+<span class="fc" id="L23">    double bestScore = Double.NEGATIVE_INFINITY;</span>
+
+<span class="fc bfc" id="L25" title="All 2 branches covered.">    for (int cardIdx = 0; cardIdx &lt; hand.size(); cardIdx++) {</span>
+<span class="fc" id="L26">      Card card = hand.get(cardIdx);</span>
+
+<span class="fc bfc" id="L28" title="All 2 branches covered.">      for (int row = 0; row &lt; dims[0]; row++) {</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        for (int col = 0; col &lt; dims[1]; col++) {</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">          if (model.isLegalMove(cardIdx, row, col)) {</span>
+<span class="fc" id="L31">            double score = scoreMove(model, card, row, col, currentPlayer);</span>
+
+<span class="fc bfc" id="L33" title="All 2 branches covered.">            if (score &gt; bestScore) {</span>
+<span class="fc" id="L34">              bestScore = score;</span>
+<span class="fc" id="L35">              bestMove = new Move(cardIdx, row, col);</span>
+            }
+          }
+        }
+      }
+    }
+
+<span class="fc" id="L42">    return bestMove;</span>
+  }
+
+  /**
+   * Represents scoring a potential move based on influence spread and card value.
+   */
+  private double scoreMove(ReadOnlySanguineModel model, Card card,
+                           int row, int col, Player player) {
+<span class="fc" id="L50">    int[] dims = model.getGameBoardDimensions();</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">    boolean isBlue = (player == Player.BLUE);</span>
+
+<span class="fc" id="L53">    int influenceCount = 0;</span>
+<span class="fc" id="L54">    int conversionCount = 0;</span>
+
+<span class="fc bfc" id="L56" title="All 2 branches covered.">    for (int newRow = 0; newRow &lt; 5; newRow++) {</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">      for (int newCol = 0; newCol &lt; 5; newCol++) {</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        if (card.hasInfluenceAt(newRow, newCol, isBlue)) {</span>
+<span class="fc" id="L59">          int boardRow = row + newRow - 2;</span>
+<span class="fc" id="L60">          int boardCol = col + newCol - 2;</span>
+
+<span class="pc bpc" id="L62" title="4 of 8 branches missed.">          if (boardRow &gt;= 0 &amp;&amp; boardRow &lt; dims[0]</span>
+              &amp;&amp; boardCol &gt;= 0 &amp;&amp; boardCol &lt; dims[1]) {
+<span class="fc" id="L64">            Cell target = model.getCellAt(boardRow, boardCol);</span>
+
+<span class="fc bfc" id="L66" title="All 2 branches covered.">            if (target.getCard() != null) {</span>
+<span class="fc" id="L67">              continue;</span>
+            }
+
+<span class="fc bfc" id="L70" title="All 2 branches covered.">            if (!target.hasPawns()) {</span>
+<span class="fc" id="L71">              influenceCount++;</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">            } else if (target.getPawnOwner() != player) {</span>
+<span class="fc" id="L73">              conversionCount += 2;</span>
+            } else {
+<span class="fc" id="L75">              influenceCount++;</span>
+            }
+          }
+        }
+      }
+    }
+
+<span class="fc" id="L82">    return influenceCount + conversionCount + (card.getValue() * 0.5);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

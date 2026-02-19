@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameCell.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">f25-hw07-groups-group-DartGoggins</a> &gt; <a href="index.source.html" class="el_package">sanguine.model</a> &gt; <span class="el_source">GameCell.java</span></div><h1>GameCell.java</h1><pre class="source lang-java linenums">package sanguine.model;
+
+/**
+ * Represents a cell in the game board whose contents can change over time.
+ */
+public class GameCell implements Cell {
+  private int pawnCount;
+  private Player pawnOwner;
+  private Card card;
+  private Player cardOwner;
+
+  /**
+   * Represents creating a cell in the game board of Sanguine.
+   */
+<span class="fc" id="L15">  public GameCell() {</span>
+<span class="fc" id="L16">    this.pawnCount = 0;</span>
+<span class="fc" id="L17">    this.pawnOwner = null;</span>
+<span class="fc" id="L18">    this.card = null;</span>
+<span class="fc" id="L19">    this.cardOwner = null;</span>
+<span class="fc" id="L20">  }</span>
+
+  /**
+   * Represents checking to see if the specified cell is empty and contains no pawns or cards.
+   *
+   * @return true if the cell has no contents, else return boolean false
+   */
+  @Override
+  public boolean isCellEmpty() {
+<span class="nc bnc" id="L29" title="All 4 branches missed.">    return this.pawnCount == 0 &amp;&amp; this.card == null;</span>
+  }
+
+  /**
+   * Represents checking to see if the cell contains pawns.
+   *
+   * @return true if the cell contains a pawn, else return boolean false
+   */
+  @Override
+  public boolean hasPawns() {
+<span class="fc bfc" id="L39" title="All 2 branches covered.">    return this.pawnCount &gt; 0;</span>
+  }
+
+  /**
+   * Represents getting the pawn count for a particular cell.
+   *
+   * @return the number of pawns in a specified cell
+   */
+  @Override
+  public int getPawnCount() {
+<span class="fc" id="L49">    return this.pawnCount;</span>
+  }
+
+  /**
+   * Represents getting the player who owns the pawn in a particular cell.
+   *
+   * @return BLUE if the blue player owns the pawn in the cell, else return RED for the red player
+   */
+  @Override
+  public Player getPawnOwner() {
+<span class="fc" id="L59">    return this.pawnOwner;</span>
+  }
+
+  /**
+   * Represents getting the card specified in the current cell.
+   *
+   * @return the card that is in the cell
+   */
+  @Override
+  public Card getCard() {
+<span class="fc" id="L69">    return this.card;</span>
+  }
+
+  /**
+   * Represents getting the owner of the card in a particular cell.
+   *
+   * @return RED if the card belongs to the RED player, else return BLUE for the blue player
+   */
+  @Override
+  public Player getCardOwner() {
+<span class="fc" id="L79">    return this.cardOwner;</span>
+  }
+
+  /**
+   * Represents adding one pawn for either the red or blue player in a particular cell.
+   * If the cell already has a maximum pawn count of three, then this action is not valid.
+   *
+   * @param newOwner represents the player who owns the pawn which is being added to the cell
+   */
+  public void addPawn(Player newOwner) {
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">    if (this.pawnCount &lt; 3) {</span>
+<span class="fc" id="L90">      this.pawnCount++;</span>
+    }
+<span class="fc" id="L92">    this.pawnOwner = newOwner;</span>
+<span class="fc" id="L93">  }</span>
+
+  /**
+   * Represents transferring ownership of pawns in an existing cell to the other player.
+   *
+   * @param newOwner represents the other player who now has ownership over the pawns
+   */
+  public void convertPawns(Player newOwner) {
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">    if (this.pawnCount &gt; 0) {</span>
+<span class="fc" id="L102">      this.pawnOwner = newOwner;</span>
+    }
+<span class="fc" id="L104">  }</span>
+
+  /**
+   * Represents placing a card inside the cell and discarding any pawns previously inside the cell.
+   *
+   * @param card  represents the card which is being placed inside the cell
+   * @param owner represents the player that owns the card whcih is being placed inside the cell
+   */
+  public void placeCard(Card card, Player owner) {
+<span class="fc" id="L113">    this.card = card;</span>
+<span class="fc" id="L114">    this.cardOwner = owner;</span>
+<span class="fc" id="L115">    this.pawnCount = 0;</span>
+<span class="fc" id="L116">    this.pawnOwner = null;</span>
+<span class="fc" id="L117">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

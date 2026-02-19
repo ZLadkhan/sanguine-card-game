@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HighValueStrategy.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">f25-hw07-groups-group-DartGoggins</a> &gt; <a href="index.source.html" class="el_package">sanguine.controller</a> &gt; <span class="el_source">HighValueStrategy.java</span></div><h1>HighValueStrategy.java</h1><pre class="source lang-java linenums">package sanguine.controller;
+
+import java.util.List;
+import sanguine.model.Card;
+import sanguine.model.ReadOnlySanguineModel;
+
+/**
+ * Represents a strategy that prioritizes playing high-value cards.
+ * We sort cards in descending order and plays the first valid move
+ * with the highest value card available, otherwise we return null.
+ */
+<span class="fc" id="L12">public class HighValueStrategy implements PlayerStrategy {</span>
+
+  @Override
+  public Move chooseMove(ReadOnlySanguineModel model) {
+<span class="fc" id="L16">    List&lt;Card&gt; hand = model.getCurrentPlayerHand();</span>
+<span class="fc" id="L17">    int[] dims = model.getGameBoardDimensions();</span>
+
+<span class="fc" id="L19">    Move bestMove = null;</span>
+<span class="fc" id="L20">    int bestValue = -1;</span>
+
+<span class="fc bfc" id="L22" title="All 2 branches covered.">    for (int cardIdx = 0; cardIdx &lt; hand.size(); cardIdx++) {</span>
+<span class="fc" id="L23">      Card card = hand.get(cardIdx);</span>
+
+<span class="fc bfc" id="L25" title="All 2 branches covered.">      for (int row = 0; row &lt; dims[0]; row++) {</span>
+<span class="fc bfc" id="L26" title="All 2 branches covered.">        for (int col = 0; col &lt; dims[1]; col++) {</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">          if (model.isLegalMove(cardIdx, row, col)) {</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">            if (card.getValue() &gt; bestValue) {</span>
+<span class="fc" id="L29">              bestValue = card.getValue();</span>
+<span class="fc" id="L30">              bestMove = new Move(cardIdx, row, col);</span>
+            }
+          }
+        }
+      }
+    }
+
+<span class="fc" id="L37">    return bestMove;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

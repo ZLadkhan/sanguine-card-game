@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BoardPanel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">f25-hw07-groups-group-DartGoggins</a> &gt; <a href="index.source.html" class="el_package">sanguine.view</a> &gt; <span class="el_source">BoardPanel.java</span></div><h1>BoardPanel.java</h1><pre class="source lang-java linenums">package sanguine.view;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Objects;
+import javax.swing.JPanel;
+import sanguine.controller.Features;
+import sanguine.model.Cell;
+import sanguine.model.Player;
+import sanguine.model.ReadOnlySanguineModel;
+
+
+/**
+ * Panel for displaying the Sanguine game board with cells, pawns, and cards.
+ */
+public class BoardPanel extends JPanel implements SanguinePanel {
+  private static final int ROW_SCORE_WIDTH = 50;
+  private static final int PAWN_DIAMETER = 20;
+  private static final int PAWN_SPACING = 20;
+<span class="nc" id="L26">  private static final Color EMPTY_CELL_COLOR = Color.GRAY;</span>
+<span class="nc" id="L27">  private static final Color RED_CARD_COLOR = Color.PINK;</span>
+<span class="nc" id="L28">  private static final Color BLUE_CARD_COLOR = Color.CYAN;</span>
+<span class="nc" id="L29">  private static final Color RED_PAWN_COLOR = Color.PINK;</span>
+<span class="nc" id="L30">  private static final Color BLUE_PAWN_COLOR = Color.CYAN;</span>
+<span class="nc" id="L31">  private static final Color HIGHLIGHT_COLOR = Color.ORANGE;</span>
+<span class="nc" id="L32">  private static final Color BORDER_COLOR = Color.BLACK;</span>
+  private final ReadOnlySanguineModel model;
+  private Features features;
+  private int selectedRow;
+  private int selectedCol;
+
+  /**
+   * Constructs a board panel for displaying the game board.
+   *
+   * @param model the read-only model to display
+   * @throws NullPointerException if model is null
+   */
+<span class="nc" id="L44">  public BoardPanel(ReadOnlySanguineModel model) {</span>
+<span class="nc" id="L45">    this.model = Objects.requireNonNull(model);</span>
+<span class="nc" id="L46">    this.selectedRow = -1;</span>
+<span class="nc" id="L47">    this.selectedCol = -1;</span>
+<span class="nc" id="L48">    this.setBackground(Color.LIGHT_GRAY);</span>
+
+<span class="nc" id="L50">    MouseEventsListener listener = new MouseEventsListener();</span>
+<span class="nc" id="L51">    this.addMouseListener(listener);</span>
+<span class="nc" id="L52">  }</span>
+
+  /**
+   * Adds a features listener to handle user interactions.
+   *
+   * @param features the controller to handle events
+   * @throws NullPointerException if features is null
+   */
+  public void addFeaturesListener(Features features) {
+<span class="nc" id="L61">    this.features = Objects.requireNonNull(features);</span>
+<span class="nc" id="L62">  }</span>
+
+  @Override
+  protected void paintComponent(Graphics g) {
+<span class="nc" id="L66">    super.paintComponent(g);</span>
+<span class="nc" id="L67">    Graphics2D g2d = (Graphics2D) g.create();</span>
+
+<span class="nc" id="L69">    int[] dims = model.getGameBoardDimensions();</span>
+<span class="nc" id="L70">    int rows = dims[0];</span>
+<span class="nc" id="L71">    int cols = dims[1];</span>
+
+<span class="nc bnc" id="L73" title="All 2 branches missed.">    for (int cellRow = 0; cellRow &lt; rows; cellRow++) {</span>
+<span class="nc" id="L74">      drawRowScore(g2d, cellRow, true);</span>
+
+<span class="nc bnc" id="L76" title="All 2 branches missed.">      for (int cellCol = 0; cellCol &lt; cols; cellCol++) {</span>
+<span class="nc" id="L77">        int dimensionOfx = ROW_SCORE_WIDTH + cellCol * getCellSize();</span>
+<span class="nc" id="L78">        int dimensionOfy = cellRow * getCellSize();</span>
+
+<span class="nc" id="L80">        Cell cell = model.getCellAt(cellRow, cellCol);</span>
+
+<span class="nc" id="L82">        drawCell(g2d, cell, dimensionOfx, dimensionOfy);</span>
+<span class="nc" id="L83">        drawCellBorder(g2d, dimensionOfx, dimensionOfy);</span>
+
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        if (isCellSelected(cellRow, cellCol)) {</span>
+<span class="nc" id="L86">          drawHighlight(g2d, dimensionOfx, dimensionOfy);</span>
+        }
+      }
+
+<span class="nc" id="L90">      drawRowScore(g2d, cellRow, false);</span>
+    }
+
+<span class="nc" id="L93">    g2d.dispose();</span>
+<span class="nc" id="L94">  }</span>
+
+  /**
+   * Draws the row score for a given row on either the left or right side.
+   *
+   * @param g2d        the graphics context
+   * @param row        the row index
+   * @param isLeftSide true for left side, false for right side
+   */
+  private void drawRowScore(Graphics2D g2d, int row, boolean isLeftSide) {
+<span class="nc" id="L104">    int[] rowScore = model.getRowScore(row);</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">    int score = isLeftSide ? rowScore[0] : rowScore[1];</span>
+
+<span class="nc" id="L107">    int[] dims = model.getGameBoardDimensions();</span>
+<span class="nc bnc" id="L108" title="All 2 branches missed.">    int x = isLeftSide ? 10 : (ROW_SCORE_WIDTH + dims[1] * getCellSize() + 10);</span>
+<span class="nc" id="L109">    int y = row * getCellSize() + getCellSize() / 2;</span>
+
+<span class="nc" id="L111">    g2d.setFont(getScaledFont());</span>
+<span class="nc" id="L112">    g2d.setColor(BORDER_COLOR);</span>
+<span class="nc" id="L113">    g2d.drawString(String.valueOf(score), x, y);</span>
+<span class="nc" id="L114">  }</span>
+
+  /**
+   * Checks if a cell at the given position is currently selected.
+   *
+   * @param row the row index
+   * @param col the column index
+   * @return true if the cell is selected, false otherwise
+   */
+  private boolean isCellSelected(int row, int col) {
+<span class="nc bnc" id="L124" title="All 4 branches missed.">    return row == selectedRow &amp;&amp; col == selectedCol;</span>
+  }
+
+  /**
+   * Draws a highlight background for a selected cell.
+   *
+   * @param g2d the graphics context
+   * @param x   the x-coordinate
+   * @param y   the y-coordinate
+   */
+  private void drawHighlight(Graphics2D g2d, int x, int y) {
+<span class="nc" id="L135">    g2d.setColor(HIGHLIGHT_COLOR);</span>
+<span class="nc" id="L136">    BasicStroke highlightStroke = new BasicStroke(4);</span>
+<span class="nc" id="L137">    g2d.setStroke(highlightStroke);</span>
+<span class="nc" id="L138">    g2d.drawRect(x, y, getCellSize(), getCellSize());</span>
+<span class="nc" id="L139">    g2d.setStroke(new BasicStroke(1));</span>
+<span class="nc" id="L140">  }</span>
+
+  /**
+   * Draws an individual cell based on its contents.
+   *
+   * @param g2d  the graphics context
+   * @param cell the cell to draw
+   * @param x    the x-coordinate
+   * @param y    the y-coordinate
+   */
+  private void drawCell(Graphics2D g2d, Cell cell, int x, int y) {
+<span class="nc bnc" id="L151" title="All 2 branches missed.">    if (cell.getCard() != null) {</span>
+<span class="nc" id="L152">      drawCardCell(g2d, cell, x, y);</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">    } else if (cell.hasPawns()) {</span>
+<span class="nc" id="L154">      drawPawnCell(g2d, cell, x, y);</span>
+    } else {
+<span class="nc" id="L156">      drawEmptyCell(g2d, x, y);</span>
+    }
+<span class="nc" id="L158">  }</span>
+
+  /**
+   * Draws a cell containing a card.
+   *
+   * @param g2d  the graphics context
+   * @param cell the cell with a card
+   * @param x    the x-coordinate
+   * @param y    the y-coordinate
+   */
+  private void drawCardCell(Graphics2D g2d, Cell cell, int x, int y) {
+<span class="nc bnc" id="L169" title="All 2 branches missed.">    Color cardColor = cell.getCardOwner() == Player.RED</span>
+<span class="nc" id="L170">        ? RED_CARD_COLOR : BLUE_CARD_COLOR;</span>
+<span class="nc" id="L171">    g2d.setColor(cardColor);</span>
+<span class="nc" id="L172">    g2d.fillRect(x, y, getCellSize(), getCellSize());</span>
+
+<span class="nc" id="L174">    g2d.setFont(getScaledFont());</span>
+<span class="nc" id="L175">    g2d.setColor(BORDER_COLOR);</span>
+<span class="nc" id="L176">    String value = String.valueOf(cell.getCard().getValue());</span>
+<span class="nc" id="L177">    int textX = x + getCellSize() / 2 - 5;</span>
+<span class="nc" id="L178">    int textY = y + getCellSize() / 2;</span>
+<span class="nc" id="L179">    g2d.drawString(value, textX, textY);</span>
+<span class="nc" id="L180">  }</span>
+
+  /**
+   * Draws a cell containing pawns.
+   *
+   * @param g2d  the graphics context
+   * @param cell the cell with pawns
+   * @param x    the x-coordinate
+   * @param y    the y-coordinate
+   */
+  private void drawPawnCell(Graphics2D g2d, Cell cell, int x, int y) {
+<span class="nc" id="L191">    g2d.setColor(EMPTY_CELL_COLOR);</span>
+<span class="nc" id="L192">    g2d.fillRect(x, y, getCellSize(), getCellSize());</span>
+
+<span class="nc bnc" id="L194" title="All 2 branches missed.">    Color pawnColor = cell.getPawnOwner() == Player.RED</span>
+<span class="nc" id="L195">        ? RED_PAWN_COLOR : BLUE_PAWN_COLOR;</span>
+
+<span class="nc" id="L197">    int pawnCount = cell.getPawnCount();</span>
+<span class="nc bnc" id="L198" title="All 2 branches missed.">    for (int i = 0; i &lt; pawnCount; i++) {</span>
+<span class="nc" id="L199">      drawPawn(g2d, pawnColor, x, y, i);</span>
+    }
+<span class="nc" id="L201">  }</span>
+
+  /**
+   * Draws a single pawn at the specified position.
+   *
+   * @param g2d       the graphics context
+   * @param pawnColor the color of the pawn
+   * @param cellX     the cell x-coordinate
+   * @param cellY     the cell y-coordinate
+   * @param pawnIndex the index of the pawn within the cell
+   */
+  private void drawPawn(Graphics2D g2d, Color pawnColor, int cellX, int cellY, int pawnIndex) {
+<span class="nc" id="L213">    g2d.setColor(pawnColor);</span>
+<span class="nc" id="L214">    int pawnX = cellX + 20 + (pawnIndex * PAWN_SPACING);</span>
+<span class="nc" id="L215">    int pawnY = cellY + getCellSize() / 2 - PAWN_DIAMETER / 2;</span>
+<span class="nc" id="L216">    g2d.fillOval(pawnX, pawnY, PAWN_DIAMETER, PAWN_DIAMETER);</span>
+<span class="nc" id="L217">  }</span>
+
+  /**
+   * Draws an empty cell.
+   *
+   * @param g2d the graphics context
+   * @param x   the x-coordinate
+   * @param y   the y-coordinate
+   */
+  private void drawEmptyCell(Graphics2D g2d, int x, int y) {
+<span class="nc" id="L227">    g2d.setColor(EMPTY_CELL_COLOR);</span>
+<span class="nc" id="L228">    g2d.fillRect(x, y, getCellSize(), getCellSize());</span>
+<span class="nc" id="L229">  }</span>
+
+  /**
+   * Draws the border around a cell.
+   *
+   * @param g2d the graphics context
+   * @param x   the x-coordinate
+   * @param y   the y-coordinate
+   */
+  private void drawCellBorder(Graphics2D g2d, int x, int y) {
+<span class="nc" id="L239">    g2d.setColor(BORDER_COLOR);</span>
+<span class="nc" id="L240">    g2d.drawRect(x, y, getCellSize(), getCellSize());</span>
+<span class="nc" id="L241">  }</span>
+
+  /**
+   * Converts physical mouse coordinates to logical grid coordinates.
+   *
+   * @param mouseX the physical x-coordinate
+   * @param mouseY the physical y-coordinate
+   * @return an array containing [row, col] or null if out of bounds
+   */
+  private int[] physicalToLogicalCoordinates(int mouseX, int mouseY) {
+<span class="nc" id="L251">    int col = (mouseX - ROW_SCORE_WIDTH) / getCellSize();</span>
+<span class="nc" id="L252">    int row = mouseY / getCellSize();</span>
+
+<span class="nc" id="L254">    int[] dims = model.getGameBoardDimensions();</span>
+<span class="nc" id="L255">    int rows = dims[0];</span>
+<span class="nc" id="L256">    int cols = dims[1];</span>
+
+<span class="nc bnc" id="L258" title="All 8 branches missed.">    if (row &gt;= 0 &amp;&amp; row &lt; rows &amp;&amp; col &gt;= 0 &amp;&amp; col &lt; cols) {</span>
+<span class="nc" id="L259">      return new int[] {row, col};</span>
+    }
+<span class="nc" id="L261">    return null;</span>
+  }
+
+  /**
+   * Handles a cell click by toggling selection and notifying the controller.
+   *
+   * @param row the row of the clicked cell
+   * @param col the column of the clicked cell
+   */
+  private void handleCellClick(int row, int col) {
+<span class="nc bnc" id="L271" title="All 2 branches missed.">    if (isCellSelected(row, col)) {</span>
+<span class="nc" id="L272">      selectedRow = -1;</span>
+<span class="nc" id="L273">      selectedCol = -1;</span>
+    } else {
+<span class="nc" id="L275">      selectedRow = row;</span>
+<span class="nc" id="L276">      selectedCol = col;</span>
+<span class="nc bnc" id="L277" title="All 2 branches missed.">      if (features != null) {</span>
+<span class="nc" id="L278">        features.handleCellClick(row, col);</span>
+      }
+    }
+<span class="nc" id="L281">    repaint();</span>
+<span class="nc" id="L282">  }</span>
+
+  /**
+   * Calculates appropriate font size based on cell size.
+   *
+   * @return a Font object with scaled size
+   */
+  private Font getScaledFont() {
+<span class="nc" id="L290">    int fontSize = Math.max(12, getCellSize() / 8);</span>
+<span class="nc" id="L291">    return new Font(&quot;SansSerif&quot;, Font.PLAIN, fontSize);</span>
+  }
+
+  /**
+   * Calculates cell size based on current panel dimensions.
+   *
+   * @return the dynamic cell size
+   */
+  private int getCellSize() {
+<span class="nc bnc" id="L300" title="All 4 branches missed.">    if (getWidth() &lt;= 0 || getHeight() &lt;= 0) {</span>
+<span class="nc" id="L301">      return 100;</span>
+    }
+
+<span class="nc" id="L304">    int[] dims = model.getGameBoardDimensions();</span>
+<span class="nc" id="L305">    int availableHeight = getHeight();</span>
+<span class="nc" id="L306">    int availableWidth = getWidth() - (2 * ROW_SCORE_WIDTH);</span>
+
+<span class="nc" id="L308">    int cellHeight = availableHeight / dims[0];</span>
+<span class="nc" id="L309">    int cellWidth = availableWidth / dims[1];</span>
+
+<span class="nc" id="L311">    return Math.min(cellHeight, cellWidth);</span>
+  }
+
+  @Override
+  public Dimension getPreferredSize() {
+<span class="nc" id="L316">    int[] dims = model.getGameBoardDimensions();</span>
+<span class="nc" id="L317">    int cellSize = 100; // Use fixed size for initial layout</span>
+<span class="nc" id="L318">    int width = ROW_SCORE_WIDTH * 2 + dims[1] * cellSize + 20;</span>
+<span class="nc" id="L319">    int height = dims[0] * cellSize;</span>
+<span class="nc" id="L320">    return new Dimension(width, height);</span>
+  }
+
+  /**
+   * Mouse event listener for handling clicks on the board.
+   */
+<span class="nc" id="L326">  private class MouseEventsListener extends MouseAdapter {</span>
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+<span class="nc" id="L330">      int[] coords = physicalToLogicalCoordinates(e.getX(), e.getY());</span>
+<span class="nc bnc" id="L331" title="All 2 branches missed.">      if (coords != null) {</span>
+<span class="nc" id="L332">        handleCellClick(coords[0], coords[1]);</span>
+      }
+<span class="nc" id="L334">    }</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SanguineGame.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">f25-hw07-groups-group-DartGoggins</a> &gt; <a href="index.source.html" class="el_package">sanguine</a> &gt; <span class="el_source">SanguineGame.java</span></div><h1>SanguineGame.java</h1><pre class="source lang-java linenums">package sanguine;
+
+import sanguine.controller.AiPlayer;
+import sanguine.controller.FirstLegalMoveStrategy;
+import sanguine.controller.HighValueStrategy;
+import sanguine.controller.HumanPlayer;
+import sanguine.controller.MaxInfluenceStrategy;
+import sanguine.controller.PlayerComponent;
+import sanguine.controller.SanguineController;
+import sanguine.model.BasicSanguine;
+import sanguine.model.Card;
+import sanguine.model.Player;
+import sanguine.model.SanguineModel;
+import sanguine.view.SanguineGuiView;
+import sanguine.view.SanguineGuiViewImpl;
+
+import java.io.File;
+import java.util.List;
+
+/**
+ * Represents the main class for running a game of Sanguine.
+ * Supports different board sizes, decks, and human/AI players.
+ */
+<span class="nc" id="L24">public final class SanguineGame {</span>
+
+  /**
+   * Main method to start a Sanguine game with GUI.
+   * Command-line arguments:
+   * 1. rows - number of rows on the board
+   * 2. columns - number of columns on the board
+   * 3. redDeckPath - path to Red player's deck file
+   * 4. blueDeckPath - path to Blue player's deck file
+   * 5. redPlayerType - &quot;human&quot;, &quot;strategy1&quot;, &quot;strategy2&quot;, or &quot;strategy3&quot;
+   * 6. bluePlayerType - &quot;human&quot;, &quot;strategy1&quot;, &quot;strategy2&quot;, or &quot;strategy3&quot;
+   *
+   * @param args represents the command-line arguments being passed
+   */
+  public static void main(String[] args) {
+<span class="nc bnc" id="L39" title="All 2 branches missed.">    if (args.length &lt; 6) {</span>
+<span class="nc" id="L40">      System.out.println(&quot;Usage: java SanguineGame &lt;rows&gt; &lt;columns&gt; &quot;</span>
+          + &quot;&lt;redDeck&gt; &lt;blueDeck&gt; &lt;redPlayer&gt; &lt;bluePlayer&gt;&quot;);
+<span class="nc" id="L42">      System.out.println(&quot;Player types: human, strategy1, strategy2, strategy3&quot;);</span>
+<span class="nc" id="L43">      System.out.println(&quot;Example: java SanguineGame 3 5 &quot;</span>
+          + &quot;docs/example.deck docs/example.deck human strategy1&quot;);
+<span class="nc" id="L45">      return;</span>
+    }
+
+    try {
+<span class="nc" id="L49">      int rows = Integer.parseInt(args[0]);</span>
+<span class="nc" id="L50">      int columns = Integer.parseInt(args[1]);</span>
+<span class="nc" id="L51">      String redDeckPath = args[2];</span>
+<span class="nc" id="L52">      String blueDeckPath = args[3];</span>
+<span class="nc" id="L53">      String redPlayerType = args[4].toLowerCase();</span>
+<span class="nc" id="L54">      String bluePlayerType = args[5].toLowerCase();</span>
+
+<span class="nc bnc" id="L56" title="All 2 branches missed.">      if (!new File(redDeckPath).exists()) {</span>
+<span class="nc" id="L57">        System.out.println(&quot;Error: Red deck file not found at &quot; + redDeckPath);</span>
+<span class="nc" id="L58">        return;</span>
+      }
+<span class="nc bnc" id="L60" title="All 2 branches missed.">      if (!new File(blueDeckPath).exists()) {</span>
+<span class="nc" id="L61">        System.out.println(&quot;Error: Blue deck file not found at &quot; + blueDeckPath);</span>
+<span class="nc" id="L62">        return;</span>
+      }
+
+<span class="nc" id="L65">      DeckReader reader = new SanguineDeckReader();</span>
+<span class="nc" id="L66">      List&lt;Card&gt; redDeck = reader.readDeck(redDeckPath);</span>
+<span class="nc" id="L67">      List&lt;Card&gt; blueDeck = reader.readDeck(blueDeckPath);</span>
+
+<span class="nc" id="L69">      int handSize = Math.min(redDeck.size() / 3, blueDeck.size() / 3);</span>
+
+<span class="nc bnc" id="L71" title="All 2 branches missed.">      if (handSize &lt; 1) {</span>
+<span class="nc" id="L72">        System.out.println(&quot;Error: Decks too small. Need at least 3 cards per deck.&quot;);</span>
+<span class="nc" id="L73">        return;</span>
+      }
+
+<span class="nc" id="L76">      SanguineModel model = new BasicSanguine();</span>
+
+<span class="nc" id="L78">      SanguineGuiView redView = new SanguineGuiViewImpl(model);</span>
+<span class="nc" id="L79">      SanguineGuiView blueView = new SanguineGuiViewImpl(model);</span>
+
+<span class="nc" id="L81">      PlayerComponent redPlayer = createPlayer(redPlayerType);</span>
+<span class="nc" id="L82">      PlayerComponent bluePlayer = createPlayer(bluePlayerType);</span>
+
+<span class="nc" id="L84">      SanguineController redController = new SanguineController(</span>
+          model, Player.RED, redView, redPlayer);
+<span class="nc" id="L86">      SanguineController blueController = new SanguineController(</span>
+          model, Player.BLUE, blueView, bluePlayer);
+
+<span class="nc" id="L89">      model.addModelListener(redController);</span>
+<span class="nc" id="L90">      model.addModelListener(blueController);</span>
+
+<span class="nc" id="L92">      model.startGame(redDeck, blueDeck, rows, columns, handSize);</span>
+
+<span class="nc" id="L94">      redView.setVisible(true);</span>
+<span class="nc" id="L95">      blueView.setVisible(true);</span>
+
+<span class="nc" id="L97">      System.out.println(&quot;Game started successfully!&quot;);</span>
+<span class="nc" id="L98">      System.out.println(&quot;Board: &quot; + rows + &quot; rows x &quot; + columns + &quot; columns&quot;);</span>
+<span class="nc" id="L99">      System.out.println(&quot;Red player: &quot; + redPlayerType);</span>
+<span class="nc" id="L100">      System.out.println(&quot;Blue player: &quot; + bluePlayerType);</span>
+<span class="nc" id="L101">      System.out.println(&quot;\nControls:&quot;);</span>
+<span class="nc" id="L102">      System.out.println(&quot;- Click card to select&quot;);</span>
+<span class="nc" id="L103">      System.out.println(&quot;- Click cell to select&quot;);</span>
+<span class="nc" id="L104">      System.out.println(&quot;- Press ENTER to confirm move&quot;);</span>
+<span class="nc" id="L105">      System.out.println(&quot;- Press P to pass turn&quot;);</span>
+
+<span class="nc" id="L107">    } catch (NumberFormatException e) {</span>
+<span class="nc" id="L108">      System.out.println(&quot;Error: Rows and columns must be integers&quot;);</span>
+<span class="nc" id="L109">    } catch (Exception e) {</span>
+<span class="nc" id="L110">      System.out.println(&quot;Error starting game: &quot; + e.getMessage());</span>
+<span class="nc" id="L111">      e.printStackTrace();</span>
+<span class="nc" id="L112">    }</span>
+<span class="nc" id="L113">  }</span>
+
+  /**
+   * Represents creating a player component based on the type of player.
+   *
+   * @param playerType the type of player (&quot;human&quot;, &quot;strategy1&quot;, and more)
+   * @return the appropriate PlayerComponent
+   */
+  private static PlayerComponent createPlayer(String playerType) {
+<span class="nc bnc" id="L122" title="All 5 branches missed.">    switch (playerType) {</span>
+      case &quot;human&quot;:
+<span class="nc" id="L124">        return new HumanPlayer();</span>
+      case &quot;strategy1&quot;:
+<span class="nc" id="L126">        return new AiPlayer(new FirstLegalMoveStrategy());</span>
+      case &quot;strategy2&quot;:
+<span class="nc" id="L128">        return new AiPlayer(new HighValueStrategy());</span>
+      case &quot;strategy3&quot;:
+<span class="nc" id="L130">        return new AiPlayer(new MaxInfluenceStrategy());</span>
+      default:
+<span class="nc" id="L132">        System.out.println(&quot;Warning: Unknown player type '&quot; + playerType</span>
+            + &quot;', defaulting to human&quot;);
+<span class="nc" id="L134">        return new HumanPlayer();</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

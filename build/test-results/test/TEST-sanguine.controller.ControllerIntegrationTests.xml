@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="sanguine.controller.ControllerIntegrationTests" tests="58" skipped="0" failures="0" errors="0" timestamp="2025-12-06T17:56:07.318Z" hostname="Jaimans-MacBook-Air.local" time="0.035">
+  <properties/>
+  <testcase name="testAiPlayerIntegration" classname="sanguine.controller.ControllerIntegrationTests" time="0.005"/>
+  <testcase name="testHighValueStrategyReturnsNullWhenNoMoves" classname="sanguine.controller.ControllerIntegrationTests" time="0.001"/>
+  <testcase name="testControllerHandlesInvalidMoveWithCardPlaced" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerHandlesRapidClicks" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerHandlesSmallBoard" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerUpdatesViewOnTurnChange" classname="sanguine.controller.ControllerIntegrationTests" time="0.001"/>
+  <testcase name="testControllerShowsWinnerMessageRed" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerUpdatesViewTitlesOnTurnChange" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testTwoPlayerGameCompleteFlow" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerHandlesConfirmWithoutCard" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerHandlesConfirmWithoutCell" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerMultipleMoveSequence" classname="sanguine.controller.ControllerIntegrationTests" time="0.001"/>
+  <testcase name="testControllerHandlesNegativeCardIndex" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerPassClearsSelections" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerViewVisibilityToggle" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testTwoAiPlayersCompleteGame" classname="sanguine.controller.ControllerIntegrationTests" time="0.005"/>
+  <testcase name="testBothPlayersPassEndsGame" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerHandlesLargeBoard" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerHandlesGameOver" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testFirstLegalMoveStrategyReturnsNullWhenNoMoves" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerRequiresCardSelection" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testMixedHumanAiGame" classname="sanguine.controller.ControllerIntegrationTests" time="0.001"/>
+  <testcase name="testHumanPlayerDoesNotAutoPlay" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerClearsSelectionsAfterSuccessfulMove" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerHandlesMultipleListeners" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testHighValueStrategyChoosesHigherValueCard" classname="sanguine.controller.ControllerIntegrationTests" time="0.001"/>
+  <testcase name="testAiPlayerWithHighValueStrategyCompletes" classname="sanguine.controller.ControllerIntegrationTests" time="0.004"/>
+  <testcase name="testGameOverSetsIsMyTurnFalse" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerHandlesInvalidCardIndex" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testDifferentStrategiesProduceDifferentMoves" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testMaxInfluenceStrategyPrefersConversions" classname="sanguine.controller.ControllerIntegrationTests" time="0.002"/>
+  <testcase name="testControllerHandlesOutOfBoundsCell" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerIgnoresCardClickWhenNotTurn" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerIgnoresActionsWhenNotPlayersTurn" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerRefreshesViewAfterMove" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerRefreshesViewAfterPass" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testAiPlayerMakesValidMove" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerClearsHighlightsOnTurnChange" classname="sanguine.controller.ControllerIntegrationTests" time="0.001"/>
+  <testcase name="testMaxInfluenceStrategyReturnsNullWhenNoMoves" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerHandlesInsufficientPawns" classname="sanguine.controller.ControllerIntegrationTests" time="0.001"/>
+  <testcase name="testFirstLegalMoveStrategyFindsValidMove" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerIgnoresCellClickWhenNotTurn" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerCanSelectDifferentCellsBeforeConfirm" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerAllowsPassWithoutSelections" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerAllowsPassAfterSelections" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerShowsTieMessage" classname="sanguine.controller.ControllerIntegrationTests" time="0.001"/>
+  <testcase name="testControllerRequiresCardAndCellBeforeConfirm" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerShowsErrorForInvalidMove" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerHandlesPlacingOnEmptyCell" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerAllowsActionsOnPlayersTurn" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testPlayingCardResetsPasses" classname="sanguine.controller.ControllerIntegrationTests" time="0.001"/>
+  <testcase name="testAiPlayerWithMaxInfluenceStrategyCompletes" classname="sanguine.controller.ControllerIntegrationTests" time="0.004"/>
+  <testcase name="testControllerHandlesPlacingOnEnemyPawns" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerViewRefreshCount" classname="sanguine.controller.ControllerIntegrationTests" time="0.001"/>
+  <testcase name="testControllerCanSelectDifferentCardsBeforeConfirm" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerRequiresBothSelections" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testControllerIgnoresPassWhenNotTurn" classname="sanguine.controller.ControllerIntegrationTests" time="0.0"/>
+  <testcase name="testAiPlayerPassesWhenNoLegalMoves" classname="sanguine.controller.ControllerIntegrationTests" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SanguineGuiViewImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">f25-hw07-groups-group-DartGoggins</a> &gt; <a href="index.source.html" class="el_package">sanguine.view</a> &gt; <span class="el_source">SanguineGuiViewImpl.java</span></div><h1>SanguineGuiViewImpl.java</h1><pre class="source lang-java linenums">package sanguine.view;
+
+import java.awt.BorderLayout;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import sanguine.controller.Features;
+import sanguine.model.ReadOnlySanguineModel;
+
+/**
+ * Implementation of the GUI view for Sanguine using Java Swing.
+ */
+public class SanguineGuiViewImpl extends JFrame implements SanguineGuiView {
+  private final ReadOnlySanguineModel model;
+  private final BoardPanel boardPanel;
+  private final HandPanel handPanel;
+
+  /**
+   * Constructs a GUI view for the Sanguine game.
+   *
+   * @param model the read-only model to display
+   */
+  public SanguineGuiViewImpl(ReadOnlySanguineModel model) {
+<span class="nc" id="L23">    super(&quot;Sanguine Game&quot;);</span>
+
+<span class="nc bnc" id="L25" title="All 2 branches missed.">    if (model == null) {</span>
+<span class="nc" id="L26">      throw new IllegalArgumentException(&quot;Model cannot be null&quot;);</span>
+    }
+
+<span class="nc" id="L29">    this.model = model;</span>
+
+<span class="nc" id="L31">    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</span>
+<span class="nc" id="L32">    this.setLayout(new BorderLayout());</span>
+
+<span class="nc" id="L34">    this.boardPanel = new BoardPanel(model);</span>
+<span class="nc" id="L35">    this.add(boardPanel, BorderLayout.CENTER);</span>
+
+<span class="nc" id="L37">    this.handPanel = new HandPanel(model);</span>
+<span class="nc" id="L38">    this.add(handPanel, BorderLayout.SOUTH);</span>
+<span class="nc" id="L39">  }</span>
+
+  @Override
+  public void setTitle(String title) {
+<span class="nc" id="L43">    super.setTitle(title);</span>
+<span class="nc" id="L44">  }</span>
+
+  @Override
+  public void setVisible(boolean visible) {
+<span class="nc" id="L48">    super.setVisible(visible);</span>
+<span class="nc" id="L49">  }</span>
+
+  @Override
+  public void refresh() {
+<span class="nc" id="L53">    this.boardPanel.repaint();</span>
+<span class="nc" id="L54">    this.handPanel.repaint();</span>
+<span class="nc" id="L55">  }</span>
+
+  @Override
+  public void addFeaturesListener(Features features) {
+<span class="nc" id="L59">    this.boardPanel.addFeaturesListener(features);</span>
+<span class="nc" id="L60">    this.handPanel.addFeaturesListener(features);</span>
+<span class="nc" id="L61">  }</span>
+
+  @Override
+  public void showMessage(String message) {
+<span class="nc" id="L65">    JOptionPane.showMessageDialog(this, message, &quot;Sanguine&quot;,</span>
+        JOptionPane.INFORMATION_MESSAGE);
+<span class="nc" id="L67">  }</span>
+
+  @Override
+  public void highlightCard(int cardIndex) {
+<span class="nc" id="L71">    handPanel.requestFocus();</span>
+<span class="nc" id="L72">    handPanel.repaint();</span>
+<span class="nc" id="L73">  }</span>
+
+  @Override
+  public void highlightCell(int row, int col) {
+<span class="nc" id="L77">    boardPanel.repaint();</span>
+<span class="nc" id="L78">  }</span>
+
+  @Override
+  public void clearHighlights() {
+<span class="nc" id="L82">    boardPanel.repaint();</span>
+<span class="nc" id="L83">    handPanel.repaint();</span>
+<span class="nc" id="L84">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

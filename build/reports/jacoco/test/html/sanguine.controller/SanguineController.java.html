@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SanguineController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">f25-hw07-groups-group-DartGoggins</a> &gt; <a href="index.source.html" class="el_package">sanguine.controller</a> &gt; <span class="el_source">SanguineController.java</span></div><h1>SanguineController.java</h1><pre class="source lang-java linenums">package sanguine.controller;
+
+import sanguine.model.Player;
+import sanguine.model.SanguineModel;
+import sanguine.view.SanguineGuiView;
+
+/**
+ * Represents the controller for the game of Sanguine.
+ * Each controller is responsible for the actions of one player.
+ */
+public class SanguineController implements Features, ModelFeatures {
+
+  private final SanguineModel model;
+  private final Player playerColor;
+  private final SanguineGuiView view;
+  private final PlayerComponent player;
+  private Integer selectedCardIndex;
+  private Integer selectedRow;
+  private Integer selectedCol;
+  private boolean isMyTurn;
+
+  /**
+   * Represents creating a new controller for a specific player.
+   *
+   * @param model       the game model
+   * @param playerColor which player this controller represents (RED or BLUE)
+   * @param view        the view for this player
+   * @param player      the player component (human or AI)
+   */
+  public SanguineController(SanguineModel model, Player playerColor,
+<span class="fc" id="L31">                            SanguineGuiView view, PlayerComponent player) {</span>
+<span class="fc" id="L32">    this.model = model;</span>
+<span class="fc" id="L33">    this.playerColor = playerColor;</span>
+<span class="fc" id="L34">    this.view = view;</span>
+<span class="fc" id="L35">    this.player = player;</span>
+<span class="fc" id="L36">    this.selectedCardIndex = null;</span>
+<span class="fc" id="L37">    this.selectedRow = null;</span>
+<span class="fc" id="L38">    this.selectedCol = null;</span>
+<span class="fc" id="L39">    this.isMyTurn = false;</span>
+
+<span class="fc" id="L41">    view.addFeaturesListener(this);</span>
+<span class="fc" id="L42">    player.addFeaturesListener(this);</span>
+<span class="fc" id="L43">  }</span>
+
+  @Override
+  public void handleCardClick(int cardIndex) {
+<span class="fc bfc" id="L47" title="All 2 branches covered.">    if (!isMyTurn) {</span>
+<span class="fc" id="L48">      return;</span>
+    }
+
+    try {
+<span class="fc bfc" id="L52" title="All 4 branches covered.">      if (cardIndex &lt; 0 || cardIndex &gt;= model.getCurrentPlayerHand().size()) {</span>
+<span class="fc" id="L53">        view.showMessage(&quot;Invalid card selection&quot;);</span>
+<span class="fc" id="L54">        return;</span>
+      }
+
+<span class="fc" id="L57">      selectedCardIndex = cardIndex;</span>
+<span class="fc" id="L58">      view.highlightCard(cardIndex);</span>
+<span class="nc" id="L59">    } catch (Exception e) {</span>
+<span class="nc" id="L60">      view.showMessage(&quot;Error selecting card: &quot; + e.getMessage());</span>
+<span class="fc" id="L61">    }</span>
+<span class="fc" id="L62">  }</span>
+
+  @Override
+  public void handleCellClick(int row, int col) {
+<span class="fc bfc" id="L66" title="All 2 branches covered.">    if (!isMyTurn) {</span>
+<span class="fc" id="L67">      return;</span>
+    }
+
+<span class="fc" id="L70">    selectedRow = row;</span>
+<span class="fc" id="L71">    selectedCol = col;</span>
+<span class="fc" id="L72">    view.highlightCell(row, col);</span>
+<span class="fc" id="L73">  }</span>
+
+  @Override
+  public void handleConfirm() {
+<span class="fc bfc" id="L77" title="All 2 branches covered.">    if (!isMyTurn) {</span>
+<span class="fc" id="L78">      view.showMessage(&quot;It's not your turn!&quot;);</span>
+<span class="fc" id="L79">      return;</span>
+    }
+
+<span class="pc bpc" id="L82" title="1 of 6 branches missed.">    if (selectedCardIndex == null || selectedRow == null || selectedCol == null) {</span>
+<span class="fc" id="L83">      view.showMessage(&quot;Please select a card and a cell before confirming&quot;);</span>
+<span class="fc" id="L84">      return;</span>
+    }
+
+    try {
+<span class="fc" id="L88">      model.placeCard(selectedCardIndex, selectedRow, selectedCol);</span>
+<span class="fc" id="L89">      clearSelections();</span>
+<span class="fc" id="L90">      view.refresh();</span>
+<span class="fc" id="L91">    } catch (IllegalArgumentException | IllegalStateException e) {</span>
+<span class="fc" id="L92">      view.showMessage(&quot;Invalid move: &quot; + e.getMessage());</span>
+<span class="fc" id="L93">    }</span>
+<span class="fc" id="L94">  }</span>
+
+  @Override
+  public void handlePass() {
+<span class="fc bfc" id="L98" title="All 2 branches covered.">    if (!isMyTurn) {</span>
+<span class="fc" id="L99">      view.showMessage(&quot;It's not your turn!&quot;);</span>
+<span class="fc" id="L100">      return;</span>
+    }
+
+    try {
+<span class="fc" id="L104">      clearSelections();</span>
+<span class="fc" id="L105">      model.passTurn();</span>
+<span class="fc" id="L106">      view.refresh();</span>
+<span class="nc" id="L107">    } catch (IllegalStateException e) {</span>
+<span class="nc" id="L108">      view.showMessage(&quot;Cannot pass: &quot; + e.getMessage());</span>
+<span class="fc" id="L109">    }</span>
+<span class="fc" id="L110">  }</span>
+
+  @Override
+  public void onTurnChanged(Player currentPlayer) {
+<span class="fc bfc" id="L114" title="All 2 branches covered.">    isMyTurn = (currentPlayer == playerColor);</span>
+
+<span class="fc bfc" id="L116" title="All 2 branches covered.">    if (isMyTurn) {</span>
+<span class="fc" id="L117">      view.setTitle(playerColor + &quot; - Your Turn&quot;);</span>
+<span class="fc" id="L118">      clearSelections();</span>
+<span class="fc" id="L119">      view.refresh();</span>
+
+<span class="fc" id="L121">      player.notifyTurn(model);</span>
+    } else {
+<span class="fc" id="L123">      view.setTitle(playerColor + &quot; - Waiting...&quot;);</span>
+<span class="fc" id="L124">      view.refresh();</span>
+    }
+<span class="fc" id="L126">  }</span>
+
+  @Override
+  public void onGameOver() {
+<span class="fc" id="L130">    isMyTurn = false;</span>
+
+<span class="fc" id="L132">    Player winner = model.getWinner();</span>
+<span class="fc" id="L133">    int[] scores = model.getFinalScores();</span>
+
+    String message;
+<span class="fc bfc" id="L136" title="All 2 branches covered.">    if (winner == null) {</span>
+<span class="fc" id="L137">      message = String.format(&quot;Game Over - Tie!\nRed: %d, Blue: %d&quot;,</span>
+<span class="fc" id="L138">          scores[0], scores[1]);</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">    } else if (winner == playerColor) {</span>
+<span class="fc" id="L140">      message = String.format(&quot;You Win!\nRed: %d, Blue: %d&quot;,</span>
+<span class="fc" id="L141">          scores[0], scores[1]);</span>
+    } else {
+<span class="fc" id="L143">      message = String.format(&quot;You Lose!\nRed: %d, Blue: %d&quot;,</span>
+<span class="fc" id="L144">          scores[0], scores[1]);</span>
+    }
+
+<span class="fc" id="L147">    view.setTitle(playerColor + &quot; - Game Over&quot;);</span>
+<span class="fc" id="L148">    view.refresh();</span>
+<span class="fc" id="L149">    view.showMessage(message);</span>
+<span class="fc" id="L150">  }</span>
+
+  /**
+   * Represents clearing all current selections.
+   */
+  private void clearSelections() {
+<span class="fc" id="L156">    selectedCardIndex = null;</span>
+<span class="fc" id="L157">    selectedRow = null;</span>
+<span class="fc" id="L158">    selectedCol = null;</span>
+<span class="fc" id="L159">    view.clearHighlights();</span>
+<span class="fc" id="L160">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>
